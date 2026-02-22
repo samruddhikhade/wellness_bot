@@ -74,30 +74,3 @@ def chat(request: ChatRequest):
 
     return {"response": response.content}
 
-# -------- CLI MODE --------
-user_id = "user654"
-
-while True:
-    question = input("Ask a question: ")
-
-    if question.lower() in ["exit", "quit"]:
-        break
-
-    history = get_history(user_id)
-    response = chain.invoke({"history": history, "question": question})
-
-    collection.insert_one({
-        "user_id": user_id,
-        "role": "user",
-        "message": question,
-        "timestamp": datetime.now(timezone.utc)
-    })
-
-    collection.insert_one({
-        "user_id": user_id,
-        "role": "assistant",
-        "message": response.content,
-        "timestamp": datetime.now(timezone.utc)
-    })
-
-    print(response.content)
